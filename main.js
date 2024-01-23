@@ -1,19 +1,23 @@
 const numBtns = Array.from(document.querySelectorAll('.number'))
 const opBtns = Array.from(document.querySelectorAll('.operator'))
 const funcBtns = Array.from(document.querySelectorAll('.function'))
+const display = document.getElementById('display')
 
 let equalBtn = document.getElementById('equal')
 let clearBtn = document.getElementById('clear')
-let display = document.getElementById('display')
+let delBtn = document.getElementById('del')
 
 let numArr = []
-let operator = '+'
-let displayValue = ''
+let operator = ''
 let currentNum = ''
-let operatorSelected = true
-
+let operatorSelected = false
 
 function init() {
+    numArr = []
+    operator = '+'
+    currentNum = ''
+    operatorSelected = true
+    updateDisplay(currentNum)
 }
 
 let calcFuncs = {
@@ -50,7 +54,7 @@ function operate(operator) {
                     break;
         }
         console.log(numArr)
-        display.innerHTML = numArr[0]
+        updateDisplay(numArr[0])
     } else {
         console.log('not long enough')
     }
@@ -66,12 +70,12 @@ function createNewNum(number) {
     }
 }
 
-
 numBtns.forEach(btn => {
     btn.addEventListener('click', () => {
         // if (operatorSelected) {
         value = btn.value
         currentNum += value
+        updateDisplay(currentNum)
         console.log(currentNum)
         // }
     })
@@ -97,6 +101,23 @@ equalBtn.addEventListener('click', () => {
     }
 })
 
+delBtn.addEventListener('click', () => {
+    deleteChar()
+    updateDisplay(currentNum)
+})
+
+clearBtn.addEventListener('click', () => {
+    init()
+})
+
 function resetCurrentNum() {
     currentNum = ''
+}
+
+function updateDisplay(value) {
+    display.innerHTML = value
+}
+
+function deleteChar() {
+    currentNum = currentNum.slice(0, -1)
 }
