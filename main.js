@@ -16,7 +16,7 @@ function init() {
     numArr = []
     operator = '+'
     currentNum = ''
-    operatorSelected = true
+    operatorSelected = false
     updateDisplay(currentNum)
 }
 
@@ -39,30 +39,42 @@ function operate(operator) {
     if (numArr.length > 1) {
         let num1 = +numArr.shift()
         let num2 = +numArr.shift()
+        let result;
         switch (operator) {
                 case '+':
-                    numArr.unshift(calcFuncs.add(num1, num2))
+                    result = calcFuncs.add(num1, num2)
                     break;
                 case '-':
-                    numArr.unshift(calcFuncs.subtract(num1, num2))
+                    result = calcFuncs.subtract(num1, num2)
                     break;
                 case '*':
-                    numArr.unshift(calcFuncs.multiply(num1, num2))
+                    result = calcFuncs.multiply(num1, num2)
                     break;
                 case '/':
-                    numArr.unshift(calcFuncs.divide(num1, num2))
+                    if (num1 === 0 && num2 === 0 ) {
+                        updateDisplay('Overflow')
+                        numArr = []
+                        return
+                    } else if (num1 === 0 || num2 === 0 ) {
+                        result = num1 === 0 ? num1 : num2;
+                    } else {
+                    result = calcFuncs.divide(num1, num2)
+                    }
                     break;
         }
+        //result = result.toFixed(5)
+        //need to check for decimal rounding
+        numArr.unshift(result.toFixed(3))
         console.log(numArr)
         updateDisplay(numArr[0])
     } else {
-        console.log('not long enough')
+        console.log('only one number present')
     }
 }
 
 function createNewNum(number) {
     if (number.length < 1) {
-        console.log('wrong')
+        console.log('invalid number')
         return
     } else {
     numArr.push(number)
@@ -121,3 +133,5 @@ function updateDisplay(value) {
 function deleteChar() {
     currentNum = currentNum.slice(0, -1)
 }
+
+// to add: rounding, decimal support, positive/negative number support, keyboard support, nice ui
