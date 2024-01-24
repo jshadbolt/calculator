@@ -3,6 +3,7 @@ const opBtns = Array.from(document.querySelectorAll('.operator'))
 const funcBtns = Array.from(document.querySelectorAll('.function'))
 const display = document.getElementById('display')
 
+let decimalBtn = document.getElementById('decimal')
 let equalBtn = document.getElementById('equal')
 let clearBtn = document.getElementById('clear')
 let delBtn = document.getElementById('del')
@@ -10,13 +11,13 @@ let delBtn = document.getElementById('del')
 let numArr = []
 let operator = ''
 let currentNum = ''
-let operatorSelected = false
+let operatorSelected = true
 
 function init() {
     numArr = []
     operator = '+'
     currentNum = ''
-    operatorSelected = false
+    operatorSelected = true
     updateDisplay(currentNum)
 }
 
@@ -62,9 +63,7 @@ function operate(operator) {
                     }
                     break;
         }
-        //result = result.toFixed(5)
-        //need to check for decimal rounding
-        numArr.unshift(result.toFixed(3))
+        numArr.unshift(isInteger(result))
         console.log(numArr)
         updateDisplay(numArr[0])
     } else {
@@ -84,12 +83,12 @@ function createNewNum(number) {
 
 numBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-        // if (operatorSelected) {
+        if (operatorSelected) {
         value = btn.value
         currentNum += value
         updateDisplay(currentNum)
         console.log(currentNum)
-        // }
+        }
     })
 })
 
@@ -122,6 +121,15 @@ clearBtn.addEventListener('click', () => {
     init()
 })
 
+decimalBtn.addEventListener('click', () => {
+    if (currentNum.includes('.')) {
+        return
+    } else {
+        currentNum += '.'
+        updateDisplay(currentNum)
+    }
+})
+
 function resetCurrentNum() {
     currentNum = ''
 }
@@ -134,4 +142,10 @@ function deleteChar() {
     currentNum = currentNum.slice(0, -1)
 }
 
-// to add: rounding, decimal support, positive/negative number support, keyboard support, nice ui
+function isInteger(num) {
+    return num % 1 != 0 ? num.toFixed(3) : num
+}
+
+
+
+//decimal input support, positive/negative number support, keyboard support, nice ui, darkening toggle for operator btns
