@@ -44,3 +44,7 @@ button {
     border-radius: 5px;
     font-family: system-ui;
 }
+
+.clicked {
+    filter: brightness(0.8); /* Adjust the value as needed (0.8 is an example) */
+}

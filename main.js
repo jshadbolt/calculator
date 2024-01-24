@@ -3,6 +3,7 @@ const opBtns = Array.from(document.querySelectorAll('.operator'))
 const funcBtns = Array.from(document.querySelectorAll('.function'))
 const display = document.getElementById('display')
 
+let plusOrMinusBtn = document.getElementById('plusOrMinus')
 let decimalBtn = document.getElementById('decimal')
 let equalBtn = document.getElementById('equal')
 let clearBtn = document.getElementById('clear')
@@ -12,6 +13,7 @@ let numArr = []
 let operator = ''
 let currentNum = ''
 let operatorSelected = true
+let toggle = false
 
 function init() {
     numArr = []
@@ -22,16 +24,16 @@ function init() {
 }
 
 let calcFuncs = {
-    add : function(a, b) {
+    add: function (a, b) {
         return a + b
     },
-    subtract : function(a, b) {
+    subtract: function (a, b) {
         return a - b
     },
-    multiply : function(a, b) {
+    multiply: function (a, b) {
         return a * b
     },
-    divide : function(a, b) {
+    divide: function (a, b) {
         return a / b
     },
 }
@@ -42,26 +44,26 @@ function operate(operator) {
         let num2 = +numArr.shift()
         let result;
         switch (operator) {
-                case '+':
-                    result = calcFuncs.add(num1, num2)
-                    break;
-                case '-':
-                    result = calcFuncs.subtract(num1, num2)
-                    break;
-                case '*':
-                    result = calcFuncs.multiply(num1, num2)
-                    break;
-                case '/':
-                    if (num1 === 0 && num2 === 0 ) {
-                        updateDisplay('Overflow')
-                        numArr = []
-                        return
-                    } else if (num1 === 0 || num2 === 0 ) {
-                        result = num1 === 0 ? num1 : num2;
-                    } else {
+            case '+':
+                result = calcFuncs.add(num1, num2)
+                break;
+            case '-':
+                result = calcFuncs.subtract(num1, num2)
+                break;
+            case '*':
+                result = calcFuncs.multiply(num1, num2)
+                break;
+            case '/':
+                if (num1 === 0 && num2 === 0) {
+                    updateDisplay('Overflow')
+                    numArr = []
+                    return
+                } else if (num1 === 0 || num2 === 0) {
+                    result = num1 === 0 ? num1 : num2;
+                } else {
                     result = calcFuncs.divide(num1, num2)
-                    }
-                    break;
+                }
+                break;
         }
         numArr.unshift(isInteger(result))
         console.log(numArr)
@@ -76,59 +78,9 @@ function createNewNum(number) {
         console.log('invalid number')
         return
     } else {
-    numArr.push(number)
-    // console.log(numArr)
+        numArr.push(number)
     }
 }
-
-numBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-        if (operatorSelected) {
-        value = btn.value
-        currentNum += value
-        updateDisplay(currentNum)
-        console.log(currentNum)
-        }
-    })
-})
-
-opBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-        operatorSelected = true
-        createNewNum(currentNum)
-        resetCurrentNum()
-        operate(operator)
-        operator = btn.value
-        console.log(operator)
-    })
-})
-
-equalBtn.addEventListener('click', () => {
-    if (operatorSelected) {
-    createNewNum(currentNum)
-    resetCurrentNum()
-    operate(operator)
-    operatorSelected = false
-    }
-})
-
-delBtn.addEventListener('click', () => {
-    deleteChar()
-    updateDisplay(currentNum)
-})
-
-clearBtn.addEventListener('click', () => {
-    init()
-})
-
-decimalBtn.addEventListener('click', () => {
-    if (currentNum.includes('.')) {
-        return
-    } else {
-        currentNum += '.'
-        updateDisplay(currentNum)
-    }
-})
 
 function resetCurrentNum() {
     currentNum = ''
@@ -146,6 +98,81 @@ function isInteger(num) {
     return num % 1 != 0 ? num.toFixed(3) : num
 }
 
+function addOpToggle(button) {
+    // Remove 'clicked' class from all operator buttons
+    opBtns.forEach(btn => btn.classList.remove('clicked'));
 
+    // Add 'clicked' class to the clicked operator button
+    button.classList.add('clicked');
+}
 
-//decimal input support, positive/negative number support, keyboard support, nice ui, darkening toggle for operator btns
+function removeOpToggle() {
+    // Remove 'clicked' class from all operator buttons
+    opBtns.forEach(btn => btn.classList.remove('clicked'));
+}
+
+numBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        if (operatorSelected) {
+            value = btn.value
+            currentNum += value
+            updateDisplay(currentNum)
+            console.log(currentNum)
+        }
+        removeOpToggle();
+    })
+})
+
+opBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        addOpToggle(btn);
+        operatorSelected = true;
+        createNewNum(currentNum);
+        resetCurrentNum();
+        operate(operator);
+        operator = btn.value;
+        console.log(operator);
+    })
+})
+
+equalBtn.addEventListener('click', () => {
+    if (operatorSelected) {
+        createNewNum(currentNum);
+        resetCurrentNum();
+        operate(operator);
+        operatorSelected = false;
+        removeOpToggle(); // Remove 'clicked' class after calculation
+    }
+})
+
+delBtn.addEventListener('click', () => {
+    deleteChar();
+    updateDisplay(currentNum);
+})
+
+clearBtn.addEventListener('click', () => {
+    init();
+})
+
+decimalBtn.addEventListener('click', () => {
+    if (currentNum.includes('.') || !(currentNum.length)) {
+        return
+    } else {
+        currentNum += '.';
+        updateDisplay(currentNum);
+    }
+})
+
+plusOrMinusBtn.addEventListener('click', () => {
+    if (operatorSelected) {
+        if (currentNum.includes('-')) {
+            currentNum = currentNum.slice(1);
+            updateDisplay(currentNum);
+        } else {
+            currentNum = `-${currentNum}`;
+            updateDisplay(currentNum);
+        }
+    }
+})
+
+//to add: keyboard support, nice ui
