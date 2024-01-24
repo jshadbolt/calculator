@@ -246,3 +246,5 @@ function handleClearKeyPress() {
 
 
 //make it so numbers cannot start with 0
+//make a limit for max input num length
+//bug: pressing equal before input a num, prevents new num creation
