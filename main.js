@@ -99,15 +99,12 @@ function isInteger(num) {
 }
 
 function addOpToggle(button) {
-    // Remove 'clicked' class from all operator buttons
     opBtns.forEach(btn => btn.classList.remove('clicked'));
-
-    // Add 'clicked' class to the clicked operator button
     button.classList.add('clicked');
 }
 
 function removeOpToggle() {
-    // Remove 'clicked' class from all operator buttons
+    
     opBtns.forEach(btn => btn.classList.remove('clicked'));
 }
 
@@ -141,7 +138,7 @@ equalBtn.addEventListener('click', () => {
         resetCurrentNum();
         operate(operator);
         operatorSelected = false;
-        removeOpToggle(); // Remove 'clicked' class after calculation
+        removeOpToggle(); 
     }
 })
 
@@ -175,4 +172,74 @@ plusOrMinusBtn.addEventListener('click', () => {
     }
 })
 
-//to add: keyboard support, nice ui
+//to add: nice ui
+
+document.addEventListener('keydown', handleKeyPress);
+
+function handleKeyPress(event) {
+    const key = event.key;
+
+    if (/\d/.test(key)) {
+        handleDigitKeyPress(key);
+    } else if (['+', '-', '*', '/'].includes(key)) {
+        handleOperatorKeyPress(key);
+    } else if (key === '.') {
+        handleDecimalKeyPress();
+    } else if (key === 'Enter' || key === '=') {
+        handleEqualKeyPress();
+    } else if (key === 'Backspace') {
+        handleDeleteKeyPress();
+    } else if (key.toLowerCase() === 'c') {
+        handleClearKeyPress();
+    }
+}
+
+function handleDigitKeyPress(key) {
+    if (operatorSelected) {
+        currentNum = key;
+        updateDisplay(currentNum);
+        operatorSelected = false;
+        removeOpToggle(); 
+    } else {
+        currentNum += key;
+        updateDisplay(currentNum);
+    }
+}
+
+function handleOperatorKeyPress(key) {
+    const operatorBtn = opBtns.find(btn => btn.value === key);
+    if (operatorBtn) {
+        addOpToggle(operatorBtn);
+        operatorSelected = true;
+        createNewNum(currentNum);
+        resetCurrentNum();
+        operate(operator);
+        operator = key;
+    }
+}
+
+function handleDecimalKeyPress() {
+    if (!currentNum.includes('.')) {
+        currentNum += '.';
+        updateDisplay(currentNum);
+    }
+}
+
+function handleEqualKeyPress() {
+    if (!operatorSelected) {
+        createNewNum(currentNum);
+        resetCurrentNum();
+        operate(operator);
+        operatorSelected = false;
+        removeOpToggle();
+    }
+}
+
+function handleDeleteKeyPress() {
+    deleteChar();
+    updateDisplay(currentNum);
+}
+
+function handleClearKeyPress() {
+    init();
+}

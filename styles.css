@@ -46,5 +46,5 @@ button {
 }
 
 .clicked {
-    filter: brightness(0.8); /* Adjust the value as needed (0.8 is an example) */
+    filter: brightness(0.8);
 }
