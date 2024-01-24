@@ -243,3 +243,6 @@ function handleDeleteKeyPress() {
 function handleClearKeyPress() {
     init();
 }
+
+
+//make it so numbers cannot start with 0
