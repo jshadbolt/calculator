@@ -2,6 +2,10 @@ const numBtns = Array.from(document.querySelectorAll('.number'))
 const opBtns = Array.from(document.querySelectorAll('.operator'))
 const funcBtns = Array.from(document.querySelectorAll('.function'))
 const display = document.getElementById('display')
+const allbtns = document.querySelectorAll('button')
+
+let clickSound = new Audio('')
+clickSound.play()
 
 let plusOrMinusBtn = document.getElementById('plusOrMinus')
 let decimalBtn = document.getElementById('decimal')
@@ -95,7 +99,8 @@ function deleteChar() {
 }
 
 function isInteger(num) {
-    return num % 1 != 0 ? num.toFixed(3) : num
+    const decimalPlaces = (num.toString().split('.')[1] || []).length;
+    return decimalPlaces > 0 ? num.toFixed(decimalPlaces) : num;
 }
 
 function addOpToggle(button) {
@@ -111,14 +116,15 @@ function removeOpToggle() {
 numBtns.forEach(btn => {
     btn.addEventListener('click', () => {
         if (operatorSelected) {
-            value = btn.value
-            currentNum += value
-            updateDisplay(currentNum)
-            console.log(currentNum)
+            const value = btn.value;
+            if (currentNum.length < 15) {
+                currentNum += value;
+                updateDisplay(currentNum);
+            }
         }
         removeOpToggle();
-    })
-})
+    });
+});
 
 opBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -172,8 +178,6 @@ plusOrMinusBtn.addEventListener('click', () => {
     }
 })
 
-//to add: nice ui
-
 document.addEventListener('keydown', handleKeyPress);
 
 function handleKeyPress(event) {
@@ -194,15 +198,33 @@ function handleKeyPress(event) {
     }
 }
 
+function addClickedEffect(button) {
+    button.classList.add('key-clicked');
+}
+
+function removeClickedEffect(button) {
+    button.classList.remove('key-clicked');
+}
+
 function handleDigitKeyPress(key) {
     if (operatorSelected) {
         currentNum = key;
         updateDisplay(currentNum);
         operatorSelected = false;
-        removeOpToggle(); 
+        removeOpToggle();
     } else {
-        currentNum += key;
-        updateDisplay(currentNum);
+        const numWithoutNonDigits = currentNum.replace(/[^0-9]/g, ''); 
+        if (numWithoutNonDigits.length < 15) {
+            currentNum += key;
+            updateDisplay(currentNum);
+        }
+    }
+
+    // Add visual effect for keyboard input
+    const button = document.querySelector(`.number[value="${key}"]`);
+    if (button) {
+        addClickedEffect(button);
+        setTimeout(() => removeClickedEffect(button), 100);
     }
 }
 
@@ -215,6 +237,10 @@ function handleOperatorKeyPress(key) {
         resetCurrentNum();
         operate(operator);
         operator = key;
+
+        // Add visual effect for keyboard input
+        addClickedEffect(operatorBtn);
+        setTimeout(() => removeClickedEffect(operatorBtn), 100);
     }
 }
 
@@ -222,6 +248,13 @@ function handleDecimalKeyPress() {
     if (!currentNum.includes('.')) {
         currentNum += '.';
         updateDisplay(currentNum);
+
+        // Add visual effect for keyboard input
+        const button = document.getElementById('decimal');
+        if (button) {
+            addClickedEffect(button);
+            setTimeout(() => removeClickedEffect(button), 100);
+        }
     }
 }
 
@@ -232,19 +265,35 @@ function handleEqualKeyPress() {
         operate(operator);
         operatorSelected = false;
         removeOpToggle();
+
+        // Add visual effect for keyboard input
+        const button = document.getElementById('equal');
+        if (button) {
+            addClickedEffect(button);
+            setTimeout(() => removeClickedEffect(button), 100);
+        }
     }
 }
 
 function handleDeleteKeyPress() {
     deleteChar();
     updateDisplay(currentNum);
+
+    // Add visual effect for keyboard input
+    const button = document.getElementById('del');
+    if (button) {
+        addClickedEffect(button);
+        setTimeout(() => removeClickedEffect(button), 100);
+    }
 }
 
 function handleClearKeyPress() {
     init();
+
+    // Add visual effect for keyboard input
+    const button = document.getElementById('clear');
+    if (button) {
+        addClickedEffect(button);
+        setTimeout(() => removeClickedEffect(button), 100);
+    }
 }
-
-
-//make it so numbers cannot start with 0
-//make a limit for max input num length
-//bug: pressing equal before input a num, prevents new num creation
