@@ -2,22 +2,24 @@ const numBtns = Array.from(document.querySelectorAll('.number'))
 const opBtns = Array.from(document.querySelectorAll('.operator'))
 const funcBtns = Array.from(document.querySelectorAll('.function'))
 const display = document.getElementById('display')
-const allbtns = document.querySelectorAll('button')
-
-let clickSound = new Audio('')
-clickSound.play()
-
-let plusOrMinusBtn = document.getElementById('plusOrMinus')
-let decimalBtn = document.getElementById('decimal')
-let equalBtn = document.getElementById('equal')
-let clearBtn = document.getElementById('clear')
-let delBtn = document.getElementById('del')
+const allBtns = document.querySelectorAll('button')
+const plusOrMinusBtn = document.getElementById('plusOrMinus')
+const decimalBtn = document.getElementById('decimal')
+const equalBtn = document.getElementById('equal')
+const clearBtn = document.getElementById('clear')
+const delBtn = document.getElementById('del')
+const clickSound = document.getElementById("click-sound");
 
 let numArr = []
 let operator = ''
 let currentNum = ''
 let operatorSelected = true
 let toggle = false
+
+function playAudio(audio) {
+    audio.currentTime = 0;
+    audio.play();
+}
 
 function init() {
     numArr = []
@@ -178,6 +180,12 @@ plusOrMinusBtn.addEventListener('click', () => {
     }
 })
 
+allBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+        playAudio(clickSound)
+    })
+})
+
 document.addEventListener('keydown', handleKeyPress);
 
 function handleKeyPress(event) {
@@ -207,6 +215,8 @@ function removeClickedEffect(button) {
 }
 
 function handleDigitKeyPress(key) {
+    playAudio(clickSound)
+
     if (operatorSelected) {
         currentNum = key;
         updateDisplay(currentNum);
@@ -219,8 +229,6 @@ function handleDigitKeyPress(key) {
             updateDisplay(currentNum);
         }
     }
-
-    // Add visual effect for keyboard input
     const button = document.querySelector(`.number[value="${key}"]`);
     if (button) {
         addClickedEffect(button);
@@ -229,6 +237,8 @@ function handleDigitKeyPress(key) {
 }
 
 function handleOperatorKeyPress(key) {
+    playAudio(clickSound)
+
     const operatorBtn = opBtns.find(btn => btn.value === key);
     if (operatorBtn) {
         addOpToggle(operatorBtn);
@@ -237,19 +247,17 @@ function handleOperatorKeyPress(key) {
         resetCurrentNum();
         operate(operator);
         operator = key;
-
-        // Add visual effect for keyboard input
         addClickedEffect(operatorBtn);
         setTimeout(() => removeClickedEffect(operatorBtn), 100);
     }
 }
 
 function handleDecimalKeyPress() {
+    playAudio(clickSound)
+
     if (!currentNum.includes('.')) {
         currentNum += '.';
         updateDisplay(currentNum);
-
-        // Add visual effect for keyboard input
         const button = document.getElementById('decimal');
         if (button) {
             addClickedEffect(button);
@@ -259,14 +267,14 @@ function handleDecimalKeyPress() {
 }
 
 function handleEqualKeyPress() {
+    playAudio(clickSound)
+
     if (!operatorSelected) {
         createNewNum(currentNum);
         resetCurrentNum();
         operate(operator);
         operatorSelected = false;
         removeOpToggle();
-
-        // Add visual effect for keyboard input
         const button = document.getElementById('equal');
         if (button) {
             addClickedEffect(button);
@@ -276,10 +284,10 @@ function handleEqualKeyPress() {
 }
 
 function handleDeleteKeyPress() {
+    playAudio(clickSound)
+
     deleteChar();
     updateDisplay(currentNum);
-
-    // Add visual effect for keyboard input
     const button = document.getElementById('del');
     if (button) {
         addClickedEffect(button);
@@ -288,12 +296,14 @@ function handleDeleteKeyPress() {
 }
 
 function handleClearKeyPress() {
-    init();
+    playAudio(clickSound)
 
-    // Add visual effect for keyboard input
+    init();
     const button = document.getElementById('clear');
     if (button) {
         addClickedEffect(button);
         setTimeout(() => removeClickedEffect(button), 100);
     }
 }
+
+//Known bugs: unable to switch seamlessly from keyboard input to mouse input
